@@ -1,0 +1,4 @@
+# The example is linted with the same rules as the package it demonstrates —
+# a demo that would not pass the package's own bar is not much of a demo. Same
+# as there: nothing overridden, every rule on.
+include: package:very_good_analysis/analysis_options.yaml

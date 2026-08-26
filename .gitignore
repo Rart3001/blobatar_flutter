@@ -1,0 +1,30 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# A library package must not pin its dependents' versions.
+pubspec.lock
+
+# Vendored agent skills. skills-lock.json pins them; restore with
+#   npx skills experimental_install
+# Committing 22 copied upstream skill directories would put ~216 KB of
+# someone else's docs in every diff of this repo, and pub.dev already leaves
+# the whole .claude/ directory out of the published archive.
+.claude/skills/
+
+# `dart doc` writes generated HTML here. `doc/` is now tracked (it holds the
+# README's GIF), so without this the whole generated API site would sit staged
+# and ready to be committed and published.
+doc/api/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+coverage/

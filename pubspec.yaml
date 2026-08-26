@@ -1,0 +1,28 @@
+name: blobatar_flutter
+description: >
+  Deterministic, generative blob avatars painted natively with CustomPainter —
+  no SVG. Ten silhouettes, fourteen expressions, idle motion.
+version: 0.1.0
+homepage: https://github.com/Rart3001/blobatar_flutter
+repository: https://github.com/Rart3001/blobatar_flutter
+issue_tracker: https://github.com/Rart3001/blobatar_flutter/issues
+
+topics:
+  - avatar
+  - identicon
+  - generative
+  - custompainter
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.3.0
+

@@ -1,0 +1,27 @@
+name: blobatar_example
+description: Demo app for the blobatar Flutter port.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  blobatar_flutter:
+    path: ../
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  # The example has its own analysis_options.yaml, so it needs its own copy of
+  # the lint package the file includes — otherwise the include silently fails
+  # to resolve and the example goes unlinted.
+  very_good_analysis: ^10.3.0
+
+flutter:
+  uses-material-design: true

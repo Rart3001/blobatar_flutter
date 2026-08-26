@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+SUBJECT=$(head -n1 "$COMMIT_MSG_FILE")
+
+# Allow git-generated messages (merge, revert, fixup, squash).
+case "$COMMIT_MSG" in
+  Merge\ *|Revert\ *|fixup\!\ *|squash\!\ *)
+    exit 0
+    ;;
+esac
+
+# Validate Conventional Commits format.
+# Allowed: type(scope): msg  |  type: msg  |  type!: msg  |  type(scope)!: msg
+TYPES="feat|fix|docs|chore|test|refactor|ci|perf|style|build|revert"
+if ! echo "$SUBJECT" | grep -qE "^($TYPES)(\([^)]+\))?(!)?: .+"; then
+  echo "Commit message does not follow Conventional Commits format." >&2
+  echo "" >&2
+  echo "   Expected: type(scope): description" >&2
+  echo "   Allowed types: feat, fix, docs, chore, test, refactor, ci, perf, style, build, revert" >&2
+  echo "" >&2
+  echo "   Your message: $SUBJECT" >&2
+  exit 1
+fi

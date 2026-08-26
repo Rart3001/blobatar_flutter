@@ -1,0 +1,137 @@
+name: CI
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Flutter analyze & test
+    # Linux only. The suite is pure Dart plus widget tests under the headless
+    # test binding — no iOS/macOS toolchain is involved, so ubuntu is both the
+    # cheapest and the fastest runner for it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # Matches the toolchain the package is developed against. The
+          # published constraint (`>=3.19.0`) is wider on purpose; this pin
+          # only fixes what CI itself runs on.
+          flutter-version: '3.44.x'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      # Covers lib/ and test/, including the 714-assertion parity suite
+      # against upstream. `flutter analyze` here also recurses into example/
+      # (it discovers nested packages on its own), so there is no separate
+      # analyze step for it below.
+      - run: flutter analyze
+      - run: flutter test --coverage
+
+      # `--coverage` above only writes coverage/lcov.info locally; nothing
+      # else in CI reads it. Uploading it as a build artifact is what makes
+      # untested lines visible, instead of the file being generated and
+      # discarded on every run.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+          retention-days: 14
+
+      - name: example — pub get
+        run: flutter pub get
+        working-directory: example
+
+      # `flutter test` does not recurse into nested packages the way analyze
+      # does, so the example's own suite needs its own run.
+      - name: example — test
+        run: flutter test
+        working-directory: example
+
+  integration-test:
+    name: Example integration test (Android)
+    # example/integration_test/ drives the real DemoApp end to end, which
+    # needs an actual device or emulator — flutter test's headless binding
+    # doesn't run it. Android on ubuntu-latest (KVM-accelerated emulator)
+    # rather than macos-latest + the iOS simulator: same coverage, no
+    # platform-specific behaviour under test, and ubuntu-latest is the
+    # faster runner to provision. Both were verified locally before this was
+    # written; either works.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.x'
+          channel: stable
+          cache: true
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          # Matches sourceCompatibility/targetCompatibility/jvmTarget in
+          # example/android/app/build.gradle.kts.
+          java-version: '17'
+
+      - run: flutter pub get
+        working-directory: example
+
+      # ubuntu-latest has /dev/kvm, but not group permissions the emulator
+      # can use without this — the standard android-emulator-runner setup.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          working-directory: example
+          script: flutter test integration_test
+
+  commitlint:
+    name: Conventional commits
+    # PR-only: it checks the range between the PR's base and head, which
+    # only exists for a pull_request event.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Full history, so the base..head commit range below resolves.
+          fetch-depth: 0
+
+      # Reuses .githooks/commit-msg rather than a separate config, so the
+      # rule enforced here and the one enforced locally can never drift.
+      - name: Validate commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          exit_code=0
+          for sha in $(git log --format=%H "$BASE_SHA..$HEAD_SHA"); do
+            subject=$(git log -1 --format=%s "$sha")
+            echo "checking $sha: $subject"
+            git log -1 --format=%B "$sha" > /tmp/commit-msg.txt
+            if ! .githooks/commit-msg /tmp/commit-msg.txt; then
+              exit_code=1
+            fi
+          done
+          exit "$exit_code"

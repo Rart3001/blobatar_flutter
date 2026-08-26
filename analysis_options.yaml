@@ -1,0 +1,12 @@
+# Very Good Ventures' lint set. It is a superset of the Flutter team's rules
+# (`flutter_lints`), so including it replaces rather than supplements that file,
+# and it already turns on strict-casts / strict-inference / strict-raw-types —
+# there is nothing left for an `analyzer.language` block here to add.
+#
+# Nothing below it: every rule is on, and the code was brought up to them
+# rather than the other way round. Where a lint and this package's bit-exact
+# arithmetic seemed to disagree — `prefer_int_literals` reading `math.min(1.0,
+# x)` as a stray double — the answer was to say what was meant instead
+# (`math.min<double>(1, x)`), which pins the inference the lint would have
+# collapsed.
+include: package:very_good_analysis/analysis_options.yaml

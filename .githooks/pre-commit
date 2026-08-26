@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# Runs `flutter analyze` on a commit that touches Dart code.
+#
+# The test suite is left to CI, not the commit path — the parity suite alone
+# is 765 assertions and does not belong in the commit loop.
+#
+# Bypass with `git commit --no-verify`.
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+if [ -z "$staged" ]; then
+  exit 0
+fi
+
+if ! printf '%s\n' "$staged" | grep -q '\.dart$'; then
+  exit 0
+fi
+
+if ! command -v flutter >/dev/null 2>&1; then
+  echo "pre-commit: flutter is not on PATH, skipping analyze" >&2
+  exit 0
+fi
+
+repo_root=$(git rev-parse --show-toplevel)
+
+echo "pre-commit: flutter analyze"
+# `env -u GIT_*` is load-bearing, not tidiness. Git exports GIT_DIR and
+# GIT_INDEX_FILE to its hooks, and the flutter tool shells out to git to work
+# out its own version. With those inherited it reads THIS repository instead
+# of the SDK checkout and writes the answer into the shared
+# `bin/cache/flutter.version.json` — observed turning a stable release into a
+# dev-channel version string carrying this repo's remote URL, which then
+# breaks version solving for every tool on the machine sharing that SDK.
+(cd "$repo_root" &&
+  env -u GIT_DIR -u GIT_INDEX_FILE -u GIT_WORK_TREE -u GIT_PREFIX \
+    flutter analyze)
+status=$?
+
+if [ "$status" -ne 0 ]; then
+  echo "" >&2
+  echo "pre-commit failed. Fix the above, or commit with --no-verify." >&2
+fi
+
+exit "$status"

@@ -1,0 +1,35 @@
+version: 2
+
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    # Monthly: action majors land a few times a year and never urgently.
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Europe/Madrid"
+    groups:
+      pub-minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # The example app has its own pubspec (it depends on the package via a
+  # `path:` dependency, not a version constraint), so it needs its own entry.
+  - package-ecosystem: "pub"
+    directory: "/example"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Europe/Madrid"
+    groups:
+      pub-minor-and-patch:
+        update-types: ["minor", "patch"]
