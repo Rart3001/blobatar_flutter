@@ -112,6 +112,26 @@ see, and the extractor normalizes the fixture to V8 rather than silently
 recording whichever engine generated it. The gap reaches the 16th significant
 digit, around 1e-13 of a pixel — invisible either way.
 
+### Caveat: `dart:math` trig across platforms
+
+The same category of problem, one layer down: on the Dart VM, `cos`, `sin`,
+`atan2` and `pow` — used throughout `shapes.dart` and `color.dart` for petal
+placement and OKLCh — call the host platform's C math library, and IEEE 754
+does not require one bit-exact implementation of them the way it does for
+`+`, `-`, `×`, `÷` and `sqrt`. glibc (Linux) and Apple's libm (macOS) can
+disagree by one unit in the last place on the same input — this is a
+[known Dart SDK behaviour](https://github.com/dart-lang/sdk/issues/52292),
+not a bug in this port.
+
+`test/parity_test.dart` therefore compares layout geometry (`body`, `face`,
+`eyes`, `petals`) with a small relative tolerance rather than exact equality
+— the only fields it doesn't compare bit for bit. Palette and pose fields
+stay exact: colour is quantized to 8-bit channels before comparison, which
+already absorbs a difference this small, and pose values are authored
+constants, never the output of `cos`/`sin`. As with `Math.hypot` above, this
+port paints straight from the unrounded numbers, so the gap is real but
+around 1e-13 of a pixel — invisible either way.
+
 ## Usage
 
 ```dart
