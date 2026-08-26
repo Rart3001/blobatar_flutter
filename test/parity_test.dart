@@ -5,13 +5,17 @@
 /// port produces — see tool/extract_upstream_vectors.ts. Recording our own
 /// output would make the library's central promise check itself.
 ///
-/// Comparisons are exact. Both languages compute in IEEE-754 doubles over the
-/// same operations in the same order, so "close enough" would only hide a real
-/// divergence; every number here either matches bit for bit or is a bug.
+/// Comparisons are exact, with one deliberate exception: layout geometry
+/// (`body`, `face`, `eyes`, `petals`) allows the platform floating-point
+/// noise `dart:math`'s `cos`/`sin`/`atan2`/`pow` can introduce — see the
+/// README's "Caveat: `dart:math` trig across platforms". Everywhere else,
+/// "close enough" would only hide a real divergence; every other number here
+/// either matches bit for bit or is a bug.
 library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:blobatar_flutter/src/color.dart';
 import 'package:blobatar_flutter/src/pose.dart';
@@ -22,6 +26,29 @@ import 'package:flutter_test/flutter_test.dart';
 
 String _hex(Color c) =>
     '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}';
+
+/// True within the platform trig noise described up top — not a general
+/// "close enough". 1e-9 relative is many orders above the ~1e-15-relative
+/// gap that noise actually produces, and many orders below anything a real
+/// divergence in the algorithm would leave.
+bool _closeEnough(num a, num b) {
+  if (a == b) return true;
+  final scale = math.max(a.abs(), b.abs());
+  return (a - b).abs() <= scale * 1e-9;
+}
+
+/// Like `expect(actual, expected, reason: reason)`, but for a layout field
+/// that may carry platform trig noise. Null on either side falls back to
+/// exact equality, since `_closeEnough` only makes sense between two numbers.
+void _expectClose(double? actual, dynamic expected, String reason) {
+  final e = expected as num?;
+  if (actual == null || e == null) {
+    expect(actual, e, reason: reason);
+    return;
+  }
+  expect(_closeEnough(actual, e), isTrue,
+      reason: '$reason: expected ~$e, got $actual',);
+}
 
 void main() {
   final fixture = jsonDecode(
@@ -53,39 +80,44 @@ void main() {
         expect(l.shape.name, c['shape'], reason: 'silhouette');
 
         final b = c['body'] as Map<String, dynamic>;
-        expect(l.body.cx, b['cx'], reason: 'body.cx');
-        expect(l.body.cy, b['cy'], reason: 'body.cy');
-        expect(l.body.rx, b['rx'], reason: 'body.rx');
-        expect(l.body.ry, b['ry'], reason: 'body.ry');
-        expect(l.body.n, b['n'], reason: 'body.n');
-        expect(l.body.rot, b['rot'], reason: 'body.rot');
-        expect(l.body.radii, b['radii'], reason: 'body.radii');
+        _expectClose(l.body.cx, b['cx'], 'body.cx');
+        _expectClose(l.body.cy, b['cy'], 'body.cy');
+        _expectClose(l.body.rx, b['rx'], 'body.rx');
+        _expectClose(l.body.ry, b['ry'], 'body.ry');
+        _expectClose(l.body.n, b['n'], 'body.n');
+        _expectClose(l.body.rot, b['rot'], 'body.rot');
+        final radii = (b['radii'] as List).cast<num>();
+        expect(l.body.radii, hasLength(radii.length), reason: 'body.radii');
+        for (var i = 0; i < radii.length; i++) {
+          _expectClose(l.body.radii[i], radii[i], 'body.radii[$i]');
+        }
+        // Polygon-only, and an integer: never touches cos/sin/atan2/pow.
         expect(l.body.sides, b['sides'], reason: 'body.sides');
-        expect(l.body.round, b['round'], reason: 'body.round');
+        _expectClose(l.body.round, b['round'], 'body.round');
 
         final f = c['face'] as Map<String, dynamic>;
-        expect(l.face.cx, f['cx'], reason: 'face.cx');
-        expect(l.face.cy, f['cy'], reason: 'face.cy');
-        expect(l.face.rx, f['rx'], reason: 'face.rx');
-        expect(l.face.ry, f['ry'], reason: 'face.ry');
+        _expectClose(l.face.cx, f['cx'], 'face.cx');
+        _expectClose(l.face.cy, f['cy'], 'face.cy');
+        _expectClose(l.face.rx, f['rx'], 'face.rx');
+        _expectClose(l.face.ry, f['ry'], 'face.ry');
 
         final eyes = (c['eyes'] as List).cast<Map<String, dynamic>>();
         expect(l.eyes, hasLength(eyes.length));
         for (var i = 0; i < eyes.length; i++) {
-          expect(l.eyes[i].cx, eyes[i]['cx'], reason: 'eyes[$i].cx');
-          expect(l.eyes[i].cy, eyes[i]['cy'], reason: 'eyes[$i].cy');
-          expect(l.eyes[i].rx, eyes[i]['rx'], reason: 'eyes[$i].rx');
-          expect(l.eyes[i].ry, eyes[i]['ry'], reason: 'eyes[$i].ry');
-          expect(l.eyes[i].n, eyes[i]['n'], reason: 'eyes[$i].n');
-          expect(l.eyes[i].rot, eyes[i]['rot'], reason: 'eyes[$i].rot');
+          _expectClose(l.eyes[i].cx, eyes[i]['cx'], 'eyes[$i].cx');
+          _expectClose(l.eyes[i].cy, eyes[i]['cy'], 'eyes[$i].cy');
+          _expectClose(l.eyes[i].rx, eyes[i]['rx'], 'eyes[$i].rx');
+          _expectClose(l.eyes[i].ry, eyes[i]['ry'], 'eyes[$i].ry');
+          _expectClose(l.eyes[i].n, eyes[i]['n'], 'eyes[$i].n');
+          _expectClose(l.eyes[i].rot, eyes[i]['rot'], 'eyes[$i].rot');
         }
 
         final petals = (c['petals'] as List).cast<Map<String, dynamic>>();
         expect(l.petals, hasLength(petals.length), reason: 'petal count');
         for (var i = 0; i < petals.length; i++) {
-          expect(l.petals[i].cx, petals[i]['cx'], reason: 'petals[$i].cx');
-          expect(l.petals[i].cy, petals[i]['cy'], reason: 'petals[$i].cy');
-          expect(l.petals[i].r, petals[i]['r'], reason: 'petals[$i].r');
+          _expectClose(l.petals[i].cx, petals[i]['cx'], 'petals[$i].cx');
+          _expectClose(l.petals[i].cy, petals[i]['cy'], 'petals[$i].cy');
+          _expectClose(l.petals[i].r, petals[i]['r'], 'petals[$i].r');
         }
         expect(l.extra, hasLength(c['extra']), reason: 'extra outline count');
       });
