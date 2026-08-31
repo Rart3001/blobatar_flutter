@@ -13,12 +13,124 @@ This is a community port: it is not maintained by
 [Alain00](https://github.com/Alain00), blobatar's original author.
 
 <p align="center">
-  <img src="doc/demo.gif" width="320" alt="The example app walking through the fourteen expressions, over a grid of fifteen other seeds covering all ten silhouettes.">
+  <img src="https://raw.githubusercontent.com/Rart3001/blobatar_flutter/main/doc/demo.gif" width="320" alt="The example app walking through the fourteen expressions, over a grid of fifteen other seeds covering all ten silhouettes.">
 </p>
 
 One seed, fourteen expressions, recorded from `example/` on an iOS simulator.
 The grid underneath is fifteen other seeds, chosen so that all ten silhouettes
 are on screen at once.
+
+## Installation
+
+```bash
+flutter pub add blobatar_flutter
+```
+
+Or add it to `pubspec.yaml` directly:
+
+```yaml
+dependencies:
+  blobatar_flutter: ^0.1.0
+```
+
+## Usage
+
+```dart
+import 'package:blobatar_flutter/blobatar_flutter.dart';
+
+// Static, no animation.
+Blobatar(name: 'roberto@example.com', size: 96)
+
+// With a backdrop and soft corners.
+Blobatar(
+  name: 'roberto@example.com',
+  size: 96,
+  backdrop: BlobatarBackdrop.squircle,
+)
+
+// Animated: breathes, blinks and looks around while pointed at.
+Blobatar(
+  name: 'roberto@example.com',
+  size: 160,
+  animate: BlobatarAnimate.hover,
+)
+
+// Always animated — for one large avatar, not for a grid.
+Blobatar(
+  name: 'roberto@example.com',
+  size: 220,
+  animate: BlobatarAnimate.always,
+  expression: happyExpression,
+)
+
+// `thinking` is the only expression that rocks the eyes, so it needs
+// `animate` set to show anything.
+Blobatar(
+  name: 'roberto@example.com',
+  size: 160,
+  animate: BlobatarAnimate.always,
+  expression: thinkingExpression,
+)
+```
+
+Changing `expression` on a `Blobatar` whose `animate` is anything but `none`
+morphs smoothly. With `animate: BlobatarAnimate.none` the pose applies
+instantly — same as the original library, whose static variant does not
+animate either.
+
+### Pinning specific traits
+
+```dart
+Blobatar(
+  name: 'roberto@example.com',
+  traitOverrides: {'shape': 0.05}, // forces the "round" silhouette
+)
+```
+
+### Overriding the palette
+
+```dart
+Blobatar(
+  name: 'roberto@example.com',
+  paletteOverride: BlobatarPaletteOverride(head: Colors.indigo),
+)
+```
+
+## Performance
+
+Measured in this repo, per avatar per animated frame:
+
+| | cost |
+|---|---|
+| `paint()` (any of the ten silhouettes) | 10–15 µs |
+| `bakePose` | 0.2 µs |
+| resolving a tinted expression's palette | 1.3 µs (cached) |
+
+Two things the package does for you that are worth knowing about:
+
+**An animating avatar does not repaint its neighbours.** Every `Blobatar`
+carries its own `RepaintBoundary`. Without one, a single animating avatar in a
+grid shares a layer with the rest and drags them all into its repaint —
+measured at 48 of 48 per frame, now 1.
+
+**An unhovered `BlobatarAnimate.hover` does no work.** The ticker stays alive,
+but if nothing the painter reads has moved, nothing is marked dirty — so a
+grid of resting avatars costs zero per frame rather than one repaint each. The
+same applies under reduced motion. `test/repaint_test.dart` pins both.
+
+So `hover` is the right choice for large grids. `always` is for a single large
+avatar such as a profile header, where it does pay the 10–15 µs of `paint`
+every frame — the irreducible floor.
+
+## Accessibility
+
+A `Blobatar` is decorative by default and is left out of the semantics tree
+entirely, matching upstream's `aria-hidden`. Pass `semanticLabel` to give it a
+name when the avatar is the only thing identifying someone.
+
+Idle motion, the expression morph and the seesaw all stop under the platform's
+reduce-motion setting; the pose still applies, it simply arrives without the
+transition.
 
 ## Verified parity
 
@@ -131,105 +243,6 @@ already absorbs a difference this small, and pose values are authored
 constants, never the output of `cos`/`sin`. As with `Math.hypot` above, this
 port paints straight from the unrounded numbers, so the gap is real but
 around 1e-13 of a pixel — invisible either way.
-
-## Usage
-
-```dart
-import 'package:blobatar_flutter/blobatar_flutter.dart';
-
-// Static, no animation.
-Blobatar(name: 'roberto@example.com', size: 96)
-
-// With a backdrop and soft corners.
-Blobatar(
-  name: 'roberto@example.com',
-  size: 96,
-  backdrop: BlobatarBackdrop.squircle,
-)
-
-// Animated: breathes, blinks and looks around while pointed at.
-Blobatar(
-  name: 'roberto@example.com',
-  size: 160,
-  animate: BlobatarAnimate.hover,
-)
-
-// Always animated — for one large avatar, not for a grid.
-Blobatar(
-  name: 'roberto@example.com',
-  size: 220,
-  animate: BlobatarAnimate.always,
-  expression: happyExpression,
-)
-
-// `thinking` is the only expression that rocks the eyes, so it needs
-// `animate` set to show anything.
-Blobatar(
-  name: 'roberto@example.com',
-  size: 160,
-  animate: BlobatarAnimate.always,
-  expression: thinkingExpression,
-)
-```
-
-Changing `expression` on a `Blobatar` whose `animate` is anything but `none`
-morphs smoothly. With `animate: BlobatarAnimate.none` the pose applies
-instantly — same as the original library, whose static variant does not
-animate either.
-
-### Pinning specific traits
-
-```dart
-Blobatar(
-  name: 'roberto@example.com',
-  traitOverrides: {'shape': 0.05}, // forces the "round" silhouette
-)
-```
-
-### Overriding the palette
-
-```dart
-Blobatar(
-  name: 'roberto@example.com',
-  paletteOverride: BlobatarPaletteOverride(head: Colors.indigo),
-)
-```
-
-## Performance
-
-Measured in this repo, per avatar per animated frame:
-
-| | cost |
-|---|---|
-| `paint()` (any of the ten silhouettes) | 10–15 µs |
-| `bakePose` | 0.2 µs |
-| resolving a tinted expression's palette | 1.3 µs (cached) |
-
-Two things the package does for you that are worth knowing about:
-
-**An animating avatar does not repaint its neighbours.** Every `Blobatar`
-carries its own `RepaintBoundary`. Without one, a single animating avatar in a
-grid shares a layer with the rest and drags them all into its repaint —
-measured at 48 of 48 per frame, now 1.
-
-**An unhovered `BlobatarAnimate.hover` does no work.** The ticker stays alive,
-but if nothing the painter reads has moved, nothing is marked dirty — so a
-grid of resting avatars costs zero per frame rather than one repaint each. The
-same applies under reduced motion. `test/repaint_test.dart` pins both.
-
-So `hover` is the right choice for large grids. `always` is for a single large
-avatar such as a profile header, where it does pay the 10–15 µs of `paint`
-every frame — the irreducible floor.
-
-## Accessibility
-
-A `Blobatar` is decorative by default and is left out of the semantics tree
-entirely, matching upstream's `aria-hidden`. Pass `semanticLabel` to give it a
-name when the avatar is the only thing identifying someone.
-
-Idle motion, the expression morph and the seesaw all stop under the platform's
-reduce-motion setting; the pose still applies, it simply arrives without the
-transition.
 
 ## Contributing
 
