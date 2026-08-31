@@ -46,8 +46,11 @@ void _expectClose(double? actual, dynamic expected, String reason) {
     expect(actual, e, reason: reason);
     return;
   }
-  expect(_closeEnough(actual, e), isTrue,
-      reason: '$reason: expected ~$e, got $actual',);
+  expect(
+    _closeEnough(actual, e),
+    isTrue,
+    reason: '$reason: expected ~$e, got $actual',
+  );
 }
 
 void main() {
@@ -65,8 +68,11 @@ void main() {
     final shapes = meta['shapes'] as Map<String, dynamic>;
     expect(shapes.keys.toSet(), BlobShape.values.map((s) => s.name).toSet());
     for (final entry in shapes.entries) {
-      expect(entry.value, greaterThanOrEqualTo(25),
-          reason: '${entry.key} under-sampled',);
+      expect(
+        entry.value,
+        greaterThanOrEqualTo(25),
+        reason: '${entry.key} under-sampled',
+      );
     }
   });
 

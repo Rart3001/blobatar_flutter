@@ -124,19 +124,27 @@ void main() {
           );
 
       expect(
-          variant(bodyOffset: const Offset(0, 1)).shouldRepaint(base), isTrue,);
-      expect(variant(breatheScale: const Offset(1.01, 1)).shouldRepaint(base),
-          isTrue,);
+        variant(bodyOffset: const Offset(0, 1)).shouldRepaint(base),
+        isTrue,
+      );
+      expect(
+        variant(breatheScale: const Offset(1.01, 1)).shouldRepaint(base),
+        isTrue,
+      );
       expect(variant(bobDy: -1).shouldRepaint(base), isTrue);
       expect(variant(eyeBlinkScaleY: 0.5).shouldRepaint(base), isTrue);
       expect(
-          variant(gazeOffset: const Offset(1, 0)).shouldRepaint(base), isTrue,);
+        variant(gazeOffset: const Offset(1, 0)).shouldRepaint(base),
+        isTrue,
+      );
       expect(
         variant(shakeOffset: const Offset(1, 0)).shouldRepaint(base),
         isTrue,
       );
-      expect(variant(backdrop: BlobatarBackdrop.circle).shouldRepaint(base),
-          isTrue,);
+      expect(
+        variant(backdrop: BlobatarBackdrop.circle).shouldRepaint(base),
+        isTrue,
+      );
     });
   });
 }

@@ -48,8 +48,10 @@ Widget _tile(String label, Widget child) => ColoredBox(
           children: [
             child,
             const SizedBox(height: 12),
-            Text(label,
-                style: const TextStyle(fontSize: 13, color: Colors.white70),),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 13, color: Colors.white70),
+            ),
           ],
         ),
       ),

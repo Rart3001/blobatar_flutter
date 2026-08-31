@@ -56,7 +56,8 @@ class Blobatar extends StatefulWidget {
   /// [name] is the only thing that decides what it looks like; everything
   /// else decides how it is presented.
   const Blobatar({
-    required this.name, super.key,
+    required this.name,
+    super.key,
     this.size,
     this.backdrop = BlobatarBackdrop.none,
     this.paletteOverride,
@@ -236,8 +237,11 @@ class _BlobatarState extends State<Blobatar> with TickerProviderStateMixin {
   }
 
   void _recomputeStatic() {
-    _traits = Traits(widget.name,
-        normalize: widget.normalize, overrides: widget.traitOverrides,);
+    _traits = Traits(
+      widget.name,
+      normalize: widget.normalize,
+      overrides: widget.traitOverrides,
+    );
     _rawLayout = computeLayout(_traits);
     _motionSeed = computeMotionSeed(_traits);
 
@@ -248,7 +252,10 @@ class _BlobatarState extends State<Blobatar> with TickerProviderStateMixin {
     final override = widget.paletteOverride;
     if (override != null) {
       palette = palette.copyWith(
-          bg: override.background, head: override.head, eye: override.eye,);
+        bg: override.background,
+        head: override.head,
+        eye: override.eye,
+      );
     }
     _basePalette = palette;
     _resolveTint();
@@ -315,7 +322,9 @@ class _BlobatarState extends State<Blobatar> with TickerProviderStateMixin {
         ? 1.0
         : (morphMs / _morphDuration.inMilliseconds).clamp(0.0, 1.0);
     final pose = _fromPose.lerp(
-        _toExpr.pose, reduceMotion ? 1.0 : _morphCurve.transform(rawT),);
+      _toExpr.pose,
+      reduceMotion ? 1.0 : _morphCurve.transform(rawT),
+    );
 
     var breathe = const Offset(1, 1);
     var bob = 0.0;
@@ -407,19 +416,21 @@ class _BlobatarState extends State<Blobatar> with TickerProviderStateMixin {
     // wasted when *every* avatar in a grid animates, which the README already
     // advises against.
     Widget painted = RepaintBoundary(
-        child: CustomPaint(
-      painter: BlobatarPainter(
-        layout: baked.layout,
-        palette: palette,
-        backdrop: widget.backdrop,
-        bodyOffset: Offset(0, baked.bdy),
-        breatheScale: Offset(liftScale * _breathe.dx, liftScale * _breathe.dy),
-        bobDy: liftDy + _bob,
-        eyeBlinkScaleY: _blink,
-        gazeOffset: _gaze,
-        shakeOffset: _shake,
+      child: CustomPaint(
+        painter: BlobatarPainter(
+          layout: baked.layout,
+          palette: palette,
+          backdrop: widget.backdrop,
+          bodyOffset: Offset(0, baked.bdy),
+          breatheScale:
+              Offset(liftScale * _breathe.dx, liftScale * _breathe.dy),
+          bobDy: liftDy + _bob,
+          eyeBlinkScaleY: _blink,
+          gazeOffset: _gaze,
+          shakeOffset: _shake,
+        ),
       ),
-    ),);
+    );
 
     if (widget.size != null) {
       painted =

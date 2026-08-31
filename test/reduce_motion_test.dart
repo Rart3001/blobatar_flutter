@@ -28,10 +28,12 @@ Widget _app({required bool reduceMotion, required Expression expression}) =>
     );
 
 BlobatarPainter _painter(WidgetTester tester) => tester
-    .widget<CustomPaint>(find.descendant(
-      of: find.byType(Blobatar),
-      matching: find.byType(CustomPaint),
-    ),)
+    .widget<CustomPaint>(
+      find.descendant(
+        of: find.byType(Blobatar),
+        matching: find.byType(CustomPaint),
+      ),
+    )
     .painter! as BlobatarPainter;
 
 void main() {
@@ -67,8 +69,11 @@ void main() {
         .pumpWidget(_app(reduceMotion: true, expression: happyExpression));
     await tester.pump(const Duration(milliseconds: 16)); // one frame, not 300ms
 
-    expect(_painter(tester).layout.eyes[0].rx, closeTo(idleRx * 1.72, 0.001),
-        reason: 'the pose must arrive immediately, not ease in',);
+    expect(
+      _painter(tester).layout.eyes[0].rx,
+      closeTo(idleRx * 1.72, 0.001),
+      reason: 'the pose must arrive immediately, not ease in',
+    );
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -82,8 +87,11 @@ void main() {
     await gesture.addPointer(location: tester.getCenter(find.byType(Blobatar)));
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(_painter(tester).breatheScale, resting,
-        reason: 'the hover lift is decorative motion and must be gated too',);
+    expect(
+      _painter(tester).breatheScale,
+      resting,
+      reason: 'the hover lift is decorative motion and must be gated too',
+    );
     expect(_painter(tester).bobDy, 0);
 
     await gesture.removePointer();

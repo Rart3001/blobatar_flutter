@@ -140,8 +140,22 @@ class Pose {
       bdy == other.bdy;
 
   @override
-  int get hashCode => Object.hash(esx, esy, tilt, edy, edx, esx2, esy2, tilt2,
-      edy2, lock, heat, shake, rock, bdy,);
+  int get hashCode => Object.hash(
+        esx,
+        esy,
+        tilt,
+        edy,
+        edx,
+        esx2,
+        esy2,
+        tilt2,
+        edy2,
+        lock,
+        heat,
+        shake,
+        rock,
+        bdy,
+      );
 }
 
 /// A pose plus (optionally) the palette tint it wears.
@@ -170,32 +184,36 @@ class Expression {
 const idleExpression = Expression(Pose.identity);
 
 /// Wide flat arcs riding high: the universal smiling squint.
-const happyExpression = Expression(Pose(
-  esx: 1.72,
-  esy: 0.3,
-  tilt: 8,
-  edy: -1.5,
-  edx: 1.5,
-  esx2: 0.08,
-  esy2: 0.05,
-  tilt2: -16,
-  lock: 1,
-  bdy: -2.2,
-),);
+const happyExpression = Expression(
+  Pose(
+    esx: 1.72,
+    esy: 0.3,
+    tilt: 8,
+    edy: -1.5,
+    edx: 1.5,
+    esx2: 0.08,
+    esy2: 0.05,
+    tilt2: -16,
+    lock: 1,
+    bdy: -2.2,
+  ),
+);
 
 /// Small eyes, low and drifted apart, over a body that sinks.
-const sadExpression = Expression(Pose(
-  esx: 0.6,
-  esy: 0.56,
-  tilt: 26,
-  edy: 3.6,
-  edx: 1.9,
-  esx2: -0.05,
-  esy2: -0.07,
-  tilt2: -7,
-  lock: 1,
-  bdy: 2.6,
-),);
+const sadExpression = Expression(
+  Pose(
+    esx: 0.6,
+    esy: 0.56,
+    tilt: 26,
+    edy: 3.6,
+    edx: 1.9,
+    esx2: -0.05,
+    esy2: -0.07,
+    tilt2: -7,
+    lock: 1,
+    bdy: 2.6,
+  ),
+);
 
 /// A hard V of flat bars over a body that compresses, leans and runs hot.
 const madExpression = Expression(
@@ -216,87 +234,99 @@ const madExpression = Expression(
 );
 
 /// Eyes enlarged rather than squashed — the antipode of `mad`.
-const surprisedExpression = Expression(Pose(
-  esx: 1.34,
-  esy: 1.2,
-  tilt: -6,
-  edy: -1.05,
-  edx: 0.5,
-  esx2: 0.05,
-  esy2: 0.07,
-  tilt2: 3,
-  lock: 1,
-  bdy: -1.4,
-),);
+const surprisedExpression = Expression(
+  Pose(
+    esx: 1.34,
+    esy: 1.2,
+    tilt: -6,
+    edy: -1.05,
+    edx: 0.5,
+    esx2: 0.05,
+    esy2: 0.07,
+    tilt2: 3,
+    lock: 1,
+    bdy: -1.4,
+  ),
+);
 
 /// One eye a flat arc, the other open.
-const winkExpression = Expression(Pose(
-  esx: 1.32,
-  esy: 0.76,
-  tilt: 5,
-  edy: -0.6,
-  edx: 0.8,
-  esx2: 0.26,
-  esy2: -0.56,
-  tilt2: -11,
-  lock: 1,
-  bdy: -1.1,
-),);
+const winkExpression = Expression(
+  Pose(
+    esx: 1.32,
+    esy: 0.76,
+    tilt: 5,
+    edy: -0.6,
+    edx: 0.8,
+    esx2: 0.26,
+    esy2: -0.56,
+    tilt2: -11,
+    lock: 1,
+    bdy: -1.1,
+  ),
+);
 
 /// Flat bars with no angle in them, sitting low over a sunk body.
-const sleepyExpression = Expression(Pose(
-  esx: 1.14,
-  esy: 0.22,
-  edy: 2.4,
-  edx: 0.3,
-  esx2: -0.04,
-  esy2: 0.03,
-  tilt2: 4,
-  lock: 1,
-  bdy: 1.2,
-),);
+const sleepyExpression = Expression(
+  Pose(
+    esx: 1.14,
+    esy: 0.22,
+    edy: 2.4,
+    edx: 0.3,
+    esx2: -0.04,
+    esy2: 0.03,
+    tilt2: 4,
+    lock: 1,
+    bdy: 1.2,
+  ),
+);
 
 /// Half-lidded, lifted, and leaning in parallel (a cocked head, not a brow).
-const smugExpression = Expression(Pose(
-  esx: 1.3,
-  esy: 0.42,
-  tilt: 18,
-  edy: -0.5,
-  edx: 0.5,
-  esx2: 0.06,
-  esy2: -0.06,
-  tilt2: -36,
-  lock: 1,
-  bdy: -1,
-),);
+const smugExpression = Expression(
+  Pose(
+    esx: 1.3,
+    esy: 0.42,
+    tilt: 18,
+    edy: -0.5,
+    edx: 0.5,
+    esx2: 0.06,
+    esy2: -0.06,
+    tilt2: -36,
+    lock: 1,
+    bdy: -1,
+  ),
+);
 
 /// One eye narrowed, the other open.
-const unsureExpression = Expression(Pose(
-  esx: 0.95,
-  esy: 1.02,
-  tilt: 4,
-  edy: -0.2,
-  edx: 0.3,
-  esx2: 0.24,
-  esy2: -0.44,
-  tilt2: -18,
-  lock: 1,
-),);
+const unsureExpression = Expression(
+  Pose(
+    esx: 0.95,
+    esy: 1.02,
+    tilt: 4,
+    edy: -0.2,
+    edx: 0.3,
+    esx2: 0.24,
+    esy2: -0.44,
+    tilt2: -18,
+    lock: 1,
+  ),
+);
 
 /// Small eyes held high and pulled together, over a body that trembles.
-const scaredExpression = Expression(Pose(
-  esx: 0.78,
-  esy: 0.96,
-  tilt: -12,
-  edy: -1.5,
-  edx: -0.8,
-  esx2: -0.04,
-  esy2: 0.05,
-  tilt2: 4,
-  lock: 1,
-  shake: 0.35,
-  bdy: -0.6,
-),);
+const scaredExpression = Expression(
+  Pose(
+    esx: 0.78,
+    esy: 0.96,
+    tilt: -12,
+    edy: -1.5,
+    edx: -0.8,
+    esx2: -0.04,
+    esy2: 0.05,
+    tilt2: 4,
+    lock: 1,
+    shake: 0.35,
+    bdy: -0.6,
+  ),
+);
 
 /// Tall narrow eyes, drawn together, lifted, and rose.
 const loveExpression = Expression(
@@ -358,18 +388,20 @@ const sickExpression = Expression(
 /// Eyes dropped low and staggered, the pair rocking slowly — a look held
 /// somewhere else rather than at you. gen2's fourteenth expression, and the
 /// only one that uses [Pose.edy2] and [Pose.rock].
-const thinkingExpression = Expression(Pose(
-  esx: 1.15,
-  esy: 0.62,
-  edy: 4.2,
-  edx: 0.4,
-  esx2: 0.02,
-  esy2: 0.06,
-  edy2: -8.4,
-  lock: 1,
-  rock: 0.8,
-  bdy: -0.4,
-),);
+const thinkingExpression = Expression(
+  Pose(
+    esx: 1.15,
+    esy: 0.62,
+    edy: 4.2,
+    edx: 0.4,
+    esx2: 0.02,
+    esy2: 0.06,
+    edy2: -8.4,
+    lock: 1,
+    rock: 0.8,
+    bdy: -0.4,
+  ),
+);
 
 /// Every named expression, for pickers/demos.
 const Map<String, Expression> expressions = {
@@ -394,8 +426,11 @@ const Map<String, Expression> expressions = {
 /// upstream's `bakePose`.
 /// [rockPhase] drives the seesaw when the pose has `rock > 0`; leave it null
 /// for the static bake, which is upstream's `bakePose` exactly.
-({BlobLayout layout, double bdy}) bakePose(BlobLayout layout, Pose p,
-    {double? rockPhase,}) {
+({BlobLayout layout, double bdy}) bakePose(
+  BlobLayout layout,
+  Pose p, {
+  double? rockPhase,
+}) {
   final newEyes = List<BlobEye>.generate(2, (i) {
     final right = i == 1;
     final e = layout.eyes[i];
@@ -435,8 +470,12 @@ typedef TintTarget = ({Color head, Color eye});
 ///
 /// Pass [target] to skip re-deriving the endpoint; it must be the value
 /// [tintTargetFor] returns for this same palette and tint.
-BlobatarPalette tintPalette(BlobatarPalette pal, double heat, Tint tint,
-    {TintTarget? target,}) {
+BlobatarPalette tintPalette(
+  BlobatarPalette pal,
+  double heat,
+  Tint tint, {
+  TintTarget? target,
+}) {
   if (heat <= 0) return pal;
   final t = target ?? tintTargetFor(pal, tint);
   return pal.copyWith(

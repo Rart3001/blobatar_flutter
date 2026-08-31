@@ -21,8 +21,11 @@ void main() {
     await tester.tap(find.text('happy'));
     await tester.pump();
 
-    expect(fieldText(), 'renata',
-        reason: 'the seed field was reset by an unrelated rebuild',);
+    expect(
+      fieldText(),
+      'renata',
+      reason: 'the seed field was reset by an unrelated rebuild',
+    );
 
     await tester.pumpWidget(const SizedBox());
   });

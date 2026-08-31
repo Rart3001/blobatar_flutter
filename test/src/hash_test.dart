@@ -20,8 +20,11 @@ void main() {
       // different strings, and therefore different people.
       const precomposed = 'caf\u00e9';
       const decomposed = 'cafe\u0301';
-      expect(precomposed, isNot(decomposed),
-          reason: 'test is vacuous otherwise',);
+      expect(
+        precomposed,
+        isNot(decomposed),
+        reason: 'test is vacuous otherwise',
+      );
       expect(normalizeSeed(precomposed), normalizeSeed(decomposed));
       expect(normalizeSeed(decomposed), precomposed);
     });

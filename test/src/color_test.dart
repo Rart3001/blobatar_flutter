@@ -15,10 +15,16 @@ void main() {
       // ignore: avoid_redundant_argument_values
       final atZero = buildPalette(200, tone: 0);
 
-      expect(atOne.head, justBelow.head,
-          reason: 'tone 1.0 must be continuous with 0.999',);
-      expect(atOne.head, isNot(atZero.head),
-          reason: 'tone 1.0 wrapped around to the pastel swatch',);
+      expect(
+        atOne.head,
+        justBelow.head,
+        reason: 'tone 1.0 must be continuous with 0.999',
+      );
+      expect(
+        atOne.head,
+        isNot(atZero.head),
+        reason: 'tone 1.0 wrapped around to the pastel swatch',
+      );
     });
 
     test('the ramp is a step function with no wrap-around', () {
@@ -28,9 +34,11 @@ void main() {
       for (var i = 0; i <= 1000; i++) {
         final head = buildPalette(200, tone: i / 1000).head.toARGB32();
         if (seen.isEmpty || seen.last != head) {
-          expect(seen, isNot(contains(head)),
-              reason:
-                  'swatch reappeared after being left, at tone ${i / 1000}',);
+          expect(
+            seen,
+            isNot(contains(head)),
+            reason: 'swatch reappeared after being left, at tone ${i / 1000}',
+          );
           seen.add(head);
         }
       }
@@ -60,8 +68,11 @@ void main() {
         expect(v, lessThan(1.0));
         if (v > max) max = v;
       }
-      expect(max, greaterThan(0.999),
-          reason: 'sample never approached the top',);
+      expect(
+        max,
+        greaterThan(0.999),
+        reason: 'sample never approached the top',
+      );
     });
   });
 }

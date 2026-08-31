@@ -49,6 +49,7 @@ class BlobatarPainter extends CustomPainter {
   /// The already-posed layout (see `pose.dart`'s `bakePose`) — eye
   /// position/size/tilt already reflect the current expression.
   final BlobLayout layout;
+
   /// The colours to paint it in.
   final BlobatarPalette palette;
 
