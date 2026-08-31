@@ -1,0 +1,32 @@
+# Once this file exists, `dart pub publish` stops relying on .gitignore for
+# exclusion and only honors these rules — so everything .gitignore excludes
+# has to be repeated here too, or build/coverage artifacts leak into the
+# published tarball.
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+doc/api/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+coverage/
+
+# Not needed by consumers of the published package; pub.dev renders
+# README images from the `repository:` URL instead, so the GIF doesn't
+# need to ride along in the tarball.
+doc/demo.gif
+
+# Dev-only script (TypeScript) that regenerates the parity fixture from
+# the upstream JS library. Irrelevant to Dart/Flutter consumers.
+tool/
+
+# Parity fixture is large (300+ KB) and only used by test/parity_test.dart,
+# which consumers never run from the published package.
+test/fixtures/
+
+# Agent-skills tooling metadata, unrelated to the package itself.
+skills-lock.json
