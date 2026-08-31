@@ -50,13 +50,14 @@ class BlobEye {
 
   /// This eye with the given fields replaced — how a pose wears an expression
   /// without rebuilding the layout around it.
-  BlobEye copyWith(
-          {double? cx,
-          double? cy,
-          double? rx,
-          double? ry,
-          double? n,
-          double? rot,}) =>
+  BlobEye copyWith({
+    double? cx,
+    double? cy,
+    double? rx,
+    double? ry,
+    double? n,
+    double? rot,
+  }) =>
       BlobEye(
         cx: cx ?? this.cx,
         cy: cy ?? this.cy,
@@ -160,12 +161,13 @@ List<BlobEye> _faceFit(Traits t, BlobBody b, Ellipse face) {
   final cy = face.cy + gy * fit;
   return [
     BlobEye(
-        cx: cx - gap,
-        cy: cy,
-        rx: er,
-        ry: eyeRy,
-        n: t.num('eye.n', 3.5, 6),
-        rot: lean,),
+      cx: cx - gap,
+      cy: cy,
+      rx: er,
+      ry: eyeRy,
+      n: t.num('eye.n', 3.5, 6),
+      rot: lean,
+    ),
     BlobEye(
       cx: cx + gap,
       cy: cy + dy * fit,

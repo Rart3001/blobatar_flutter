@@ -243,11 +243,13 @@ final _nub = ShapeDef(
     final count = t.intRange('nub.n', 1, 2);
     for (var i = 0; i < count; i++) {
       final a = t.num('nub.a$i', 0, 2 * math.pi);
-      out.petals.add(BlobPetal(
-        b.cx + math.cos(a) * b.rx * 0.88,
-        b.cy + math.sin(a) * b.rx * 0.88,
-        b.rx * t.num('nub.r$i', 0.24, 0.4),
-      ),);
+      out.petals.add(
+        BlobPetal(
+          b.cx + math.cos(a) * b.rx * 0.88,
+          b.cy + math.sin(a) * b.rx * 0.88,
+          b.rx * t.num('nub.r$i', 0.24, 0.4),
+        ),
+      );
     }
   },
 );
@@ -262,11 +264,13 @@ final _cloud = ShapeDef(
     final count = t.intRange('cloud.n', 4, 6);
     for (var i = 0; i < count; i++) {
       final a = math.pi + (math.pi * (i + 0.5)) / count;
-      out.petals.add(BlobPetal(
-        b.cx + math.cos(a) * b.rx * 0.8,
-        b.cy + math.sin(a) * b.rx * 0.5,
-        b.rx * t.num('cloud.r$i', 0.44, 0.62),
-      ),);
+      out.petals.add(
+        BlobPetal(
+          b.cx + math.cos(a) * b.rx * 0.8,
+          b.cy + math.sin(a) * b.rx * 0.5,
+          b.rx * t.num('cloud.r$i', 0.44, 0.62),
+        ),
+      );
     }
   },
 );
@@ -307,7 +311,8 @@ final _sun = ShapeDef(
     for (var i = 0; i < count; i++) {
       final a = off + (2 * math.pi * i) / count;
       out.petals.add(
-          BlobPetal(b.cx + math.cos(a) * dist, b.cy + math.sin(a) * dist, pr),);
+        BlobPetal(b.cx + math.cos(a) * dist, b.cy + math.sin(a) * dist, pr),
+      );
     }
   },
 );

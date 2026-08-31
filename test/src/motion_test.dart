@@ -96,8 +96,10 @@ void main() {
       // Symmetric about the pair's centre at every phase.
       for (var ms = 0.0; ms < 900; ms += 11) {
         final p = rockPhase(ms);
-        expect(rockShare(1, p, right: true) + rockShare(1, p, right: false),
-            closeTo(1, 1e-9),);
+        expect(
+          rockShare(1, p, right: true) + rockShare(1, p, right: false),
+          closeTo(1, 1e-9),
+        );
       }
     });
   });
@@ -122,8 +124,10 @@ void main() {
     test('different seeds are out of phase with each other', () {
       // A grid should read as a crowd, not a heartbeat.
       final other = computeMotionSeed(Traits('renata'));
-      expect(breatheScale(1000, seed, 1).dx,
-          isNot(closeTo(breatheScale(1000, other, 1).dx, 1e-4)),);
+      expect(
+        breatheScale(1000, seed, 1).dx,
+        isNot(closeTo(breatheScale(1000, other, 1).dx, 1e-4)),
+      );
     });
   });
 }

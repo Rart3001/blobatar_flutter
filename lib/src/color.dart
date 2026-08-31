@@ -167,8 +167,11 @@ Oklch mixOklch(Oklch a, Oklch b, double t) {
   final by = b.c * math.sin(rad(b.h));
   final x = ax + (bx - ax) * t;
   final y = ay + (by - ay) * t;
-  return Oklch(a.l + (b.l - a.l) * t, math.sqrt(x * x + y * y),
-      math.atan2(y, x) * 180 / math.pi,);
+  return Oklch(
+    a.l + (b.l - a.l) * t,
+    math.sqrt(x * x + y * y),
+    math.atan2(y, x) * 180 / math.pi,
+  );
 }
 
 /// Blends two sRGB colours [t] of the way from [a] to [b], travelling through
@@ -330,8 +333,11 @@ class BlobatarPalette {
 
 /// Builds the palette for a hue/tone pair. [tone] is a raw 0–1 position in
 /// the swatch set (the same units [Traits] reads it in), not degrees.
-BlobatarPalette buildPalette(double hue,
-    {bool enforceContrast = true, double tone = 0,}) {
+BlobatarPalette buildPalette(
+  double hue, {
+  bool enforceContrast = true,
+  double tone = 0,
+}) {
   final t = _toneAt(tone);
   var head = ensureContrast(Oklch(t.l, t.c, hue), _darkSurface, _surfaceFloor);
   // Polarity follows the body: dark eyes on a light body, light eyes on a
@@ -347,5 +353,8 @@ BlobatarPalette buildPalette(double hue,
   }
 
   return BlobatarPalette(
-      bg: toColor(bg), head: toColor(head), eye: toColor(eye),);
+    bg: toColor(bg),
+    head: toColor(head),
+    eye: toColor(eye),
+  );
 }

@@ -34,8 +34,11 @@ void main() {
       await tester.pumpWidget(const DemoApp());
       await tester.pump();
 
-      expect(mainAvatar(tester).expression, idleExpression,
-          reason: 'the demo opens on the idle pose',);
+      expect(
+        mainAvatar(tester).expression,
+        idleExpression,
+        reason: 'the demo opens on the idle pose',
+      );
 
       await tester.tap(find.widgetWithText(ChoiceChip, 'happy'));
       await tester.pump();
@@ -48,8 +51,11 @@ void main() {
       // and finding 'happy' undisturbed is what actually proves the timer
       // was cancelled, rather than merely having landed on 'happy' by luck.
       await tester.pump(const Duration(seconds: 20));
-      expect(mainAvatar(tester).expression, happyExpression,
-          reason: 'picking an expression must cancel the auto-cycle timer',);
+      expect(
+        mainAvatar(tester).expression,
+        happyExpression,
+        reason: 'picking an expression must cancel the auto-cycle timer',
+      );
     });
   });
 }

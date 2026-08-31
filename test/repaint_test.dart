@@ -26,24 +26,26 @@ void main() {
       (tester) async {
     var ancestorPaints = 0;
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: CustomPaint(
-        foregroundPainter: _CountingPainter(() => ancestorPaints++),
-        child: Wrap(
-          children: List.generate(
-            48,
-            (i) => Blobatar(
-              name: 'seed$i',
-              size: 32,
-              // Exactly one animates — the hover-grid case the README
-              // recommends, and the one where isolation is worth a layer.
-              animate: i == 0 ? BlobatarAnimate.always : BlobatarAnimate.none,
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: CustomPaint(
+          foregroundPainter: _CountingPainter(() => ancestorPaints++),
+          child: Wrap(
+            children: List.generate(
+              48,
+              (i) => Blobatar(
+                name: 'seed$i',
+                size: 32,
+                // Exactly one animates — the hover-grid case the README
+                // recommends, and the one where isolation is worth a layer.
+                animate: i == 0 ? BlobatarAnimate.always : BlobatarAnimate.none,
+              ),
             ),
           ),
         ),
       ),
-    ),);
+    );
     await tester.pump(const Duration(milliseconds: 200));
 
     ancestorPaints = 0;
@@ -51,9 +53,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 16));
     }
 
-    expect(ancestorPaints, 0,
-        reason: 'the animating blobatar dirtied the layer it shares with its '
-            '47 static neighbours, so all of them repainted every frame',);
+    expect(
+      ancestorPaints,
+      0,
+      reason: 'the animating blobatar dirtied the layer it shares with its '
+          '47 static neighbours, so all of them repainted every frame',
+    );
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
@@ -65,22 +70,30 @@ void main() {
     // amplitude gate is 0 there, every motion function returns its rest
     // value, and the picture is identical frame after frame — so the frames
     // should stop.
-    await tester.pumpWidget(const Directionality(
-      textDirection: TextDirection.ltr,
-      child: Blobatar(name: 'a', size: 32, animate: BlobatarAnimate.hover),
-    ),);
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: Blobatar(name: 'a', size: 32, animate: BlobatarAnimate.hover),
+      ),
+    );
     await tester.pump(const Duration(milliseconds: 600)); // let amp settle to 0
 
-    expect(await _repaintingFrames(tester, 30), 0,
-        reason: 'an unhovered blobatar repainted while nothing was moving',);
+    expect(
+      await _repaintingFrames(tester, 30),
+      0,
+      reason: 'an unhovered blobatar repainted while nothing was moving',
+    );
 
     // The control: once hovered it must animate on every frame.
     final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer(location: tester.getCenter(find.byType(Blobatar)));
     await tester.pump(const Duration(milliseconds: 400));
 
-    expect(await _repaintingFrames(tester, 30), 30,
-        reason: 'hovering did not start the motion',);
+    expect(
+      await _repaintingFrames(tester, 30),
+      30,
+      reason: 'hovering did not start the motion',
+    );
 
     await gesture.removePointer();
     await tester.pumpWidget(const SizedBox());

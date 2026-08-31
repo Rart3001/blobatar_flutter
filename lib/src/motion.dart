@@ -57,6 +57,7 @@ class MotionSeed {
   /// Signed look magnitude on X — sign is seeded independently of magnitude
   /// so a seed can never land near zero and "never look anywhere".
   final double lookX;
+
   /// The unsigned magnitude behind [lookX], in viewBox units. Kept alongside
   /// the signed value so a consumer can ask how far this blobatar glances
   /// without asking which way.

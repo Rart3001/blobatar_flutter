@@ -9,7 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 List<BlobEye> _paintedEyes(WidgetTester tester) {
   final paint = tester.widget<CustomPaint>(
     find.descendant(
-        of: find.byType(Blobatar), matching: find.byType(CustomPaint),),
+      of: find.byType(Blobatar),
+      matching: find.byType(CustomPaint),
+    ),
   );
   return (paint.painter! as BlobatarPainter).layout.eyes;
 }
@@ -17,7 +19,9 @@ List<BlobEye> _paintedEyes(WidgetTester tester) {
 double _paintedEyeRx(WidgetTester tester) {
   final paint = tester.widget<CustomPaint>(
     find.descendant(
-        of: find.byType(Blobatar), matching: find.byType(CustomPaint),),
+      of: find.byType(Blobatar),
+      matching: find.byType(CustomPaint),
+    ),
   );
   return (paint.painter! as BlobatarPainter).layout.eyes[0].rx;
 }
@@ -26,11 +30,11 @@ Widget _app(BlobatarAnimate animate, Expression expression) => Directionality(
       textDirection: TextDirection.ltr,
       child: Center(
         child: Blobatar(
-            name: 'alain',
-            size: 100,
-            animate: animate,
-            expression: expression,
-          ),
+          name: 'alain',
+          size: 100,
+          animate: animate,
+          expression: expression,
+        ),
       ),
     );
 
@@ -42,8 +46,11 @@ void main() {
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
-      expect(tester.takeException(), isNull,
-          reason: 'stopping the ticker threw',);
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'stopping the ticker threw',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.hover, idleExpression));
       await tester.pump();
@@ -66,8 +73,11 @@ void main() {
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
-      expect(tester.binding.transientCallbackCount, 0,
-          reason: 'ticker was not stopped',);
+      expect(
+        tester.binding.transientCallbackCount,
+        0,
+        reason: 'ticker was not stopped',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.hover, idleExpression));
       await tester.pump();
@@ -100,12 +110,17 @@ void main() {
         await tester.pump(const Duration(milliseconds: 250));
         final paint = tester.widget<CustomPaint>(
           find.descendant(
-              of: find.byType(Blobatar), matching: find.byType(CustomPaint),),
+            of: find.byType(Blobatar),
+            matching: find.byType(CustomPaint),
+          ),
         );
         samples.add((paint.painter! as BlobatarPainter).breatheScale.dx);
       }
-      expect(samples.toSet().length, greaterThan(1),
-          reason: 'motion never resumed',);
+      expect(
+        samples.toSet().length,
+        greaterThan(1),
+        reason: 'motion never resumed',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
@@ -131,10 +146,12 @@ void main() {
       await tester.pumpWidget(_app(BlobatarAnimate.always, happyExpression));
       await tester.pump(const Duration(milliseconds: 400));
 
-      expect(_paintedEyeRx(tester), closeTo(idleRx * 1.72, 0.001),
-          reason:
-          'the morph never ran: the restarted clock is behind _morphStart',
-        );
+      expect(
+        _paintedEyeRx(tester),
+        closeTo(idleRx * 1.72, 0.001),
+        reason:
+            'the morph never ran: the restarted clock is behind _morphStart',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
@@ -160,9 +177,12 @@ void main() {
       await tester.pumpWidget(_app(BlobatarAnimate.always, happyExpression));
       await tester.pump(const Duration(milliseconds: 400));
 
-      expect(_paintedEyeRx(tester), closeTo(idleRx * 1.72, 0.001),
-          reason: 'the morph stalled: _morphStart was stamped on the old clock '
-              'and the restarted Ticker reports elapsed from zero',);
+      expect(
+        _paintedEyeRx(tester),
+        closeTo(idleRx * 1.72, 0.001),
+        reason: 'the morph stalled: _morphStart was stamped on the old clock '
+            'and the restarted Ticker reports elapsed from zero',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
@@ -176,27 +196,41 @@ void main() {
       await tester.pump(const Duration(milliseconds: 1400)); // mid breathe leg
       await tester.pump(const Duration(milliseconds: 16));
 
-      final paintBefore = tester.widget<CustomPaint>(find.descendant(
-          of: find.byType(Blobatar), matching: find.byType(CustomPaint),),);
+      final paintBefore = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byType(Blobatar),
+          matching: find.byType(CustomPaint),
+        ),
+      );
       final before = (paintBefore.painter! as BlobatarPainter).breatheScale.dy;
-      expect(before, lessThan(0.999),
-          reason: 'not mid-cycle; test is not probing anything',);
+      expect(
+        before,
+        lessThan(0.999),
+        reason: 'not mid-cycle; test is not probing anything',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
       await tester.pumpWidget(_app(BlobatarAnimate.always, idleExpression));
       await tester.pump(const Duration(milliseconds: 16));
 
-      final paintAfter = tester.widget<CustomPaint>(find.descendant(
-          of: find.byType(Blobatar), matching: find.byType(CustomPaint),),);
+      final paintAfter = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byType(Blobatar),
+          matching: find.byType(CustomPaint),
+        ),
+      );
       final after = (paintAfter.painter! as BlobatarPainter).breatheScale.dy;
 
       // Amplitude ramps from zero on resume, so `after` sits between rest (1.0)
       // and where the phase left off — never past it, which a rewound or
       // double-counted clock would produce.
       expect(after, lessThanOrEqualTo(1.0));
-      expect(after, greaterThanOrEqualTo(before - 1e-9),
-          reason: 'the clock jumped forward: _clockBase was added twice',);
+      expect(
+        after,
+        greaterThanOrEqualTo(before - 1e-9),
+        reason: 'the clock jumped forward: _clockBase was added twice',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
@@ -214,12 +248,18 @@ void main() {
       await tester.pump(const Duration(milliseconds: 150));
       final midRx = _paintedEyeRx(tester);
       expect(midRx, greaterThan(idleRx), reason: 'morph never started');
-      expect(midRx, lessThan(idleRx * 1.72),
-          reason: 'morph jumped instead of easing',);
+      expect(
+        midRx,
+        lessThan(idleRx * 1.72),
+        reason: 'morph jumped instead of easing',
+      );
 
       await tester.pump(const Duration(milliseconds: 200));
-      expect(_paintedEyeRx(tester), closeTo(idleRx * 1.72, 0.001),
-          reason: 'morph did not reach the happy pose (esx 1.72)',);
+      expect(
+        _paintedEyeRx(tester),
+        closeTo(idleRx * 1.72, 0.001),
+        reason: 'morph did not reach the happy pose (esx 1.72)',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
@@ -240,8 +280,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       final a = _paintedEyes(tester);
       await tester.pump(const Duration(milliseconds: 225));
-      expect(_paintedEyes(tester)[1].cy, a[1].cy,
-          reason: 'a pose with rock == 0 must not move the eye vertically',);
+      expect(
+        _paintedEyes(tester)[1].cy,
+        a[1].cy,
+        reason: 'a pose with rock == 0 must not move the eye vertically',
+      );
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
     });
@@ -256,14 +299,22 @@ void main() {
       await tester.pump(const Duration(milliseconds: 450));
       final t1 = _paintedEyes(tester);
 
-      expect(t1[0].cy, isNot(closeTo(t0[0].cy, 0.5)),
-          reason: 'left eye never moved',);
-      expect(t1[1].cy, isNot(closeTo(t0[1].cy, 0.5)),
-          reason: 'right eye never moved',);
+      expect(
+        t1[0].cy,
+        isNot(closeTo(t0[0].cy, 0.5)),
+        reason: 'left eye never moved',
+      );
+      expect(
+        t1[1].cy,
+        isNot(closeTo(t0[1].cy, 0.5)),
+        reason: 'right eye never moved',
+      );
       // Symmetric: what one eye gains the other gives up.
       expect(
-          (t0[0].cy + t0[1].cy) / 2, closeTo((t1[0].cy + t1[1].cy) / 2, 0.01),
-          reason: 'the pair drifted instead of rocking about its centre',);
+        (t0[0].cy + t0[1].cy) / 2,
+        closeTo((t1[0].cy + t1[1].cy) / 2, 0.01),
+        reason: 'the pair drifted instead of rocking about its centre',
+      );
 
       await tester.pumpWidget(_app(BlobatarAnimate.none, idleExpression));
       await tester.pump();
